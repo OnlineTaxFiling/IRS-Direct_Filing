@@ -581,3 +581,171 @@
       <h3>🇧🇷 Português: Como Fazer a Declaração de Imposto de Renda dos EUA com E‑file.com</h3>
       <p>
         1. Clique em <a href="https://www.linkconnector.com/ta.php?lc=007949061588005142&atid=e-FileWebWeb">“Declaração de Imposto de Renda dos EUA Aqui”
+      <p>
+        1. Clique em <a href="https://www.linkconnector.com/ta.php?lc=007949061588005142&atid=e-FileWebWeb">“Declaração de Imposto de Renda dos EUA Aqui”</a> para abrir o E‑file.com.</p>
+      <p>
+        2. Faça login ou crie uma conta e escolha “Declaração de Imposto Federal dos EUA 2026 – Não‑residente / Portador de visto”.</p>
+      <p>
+        3. Siga o guia passo a passo, insira seus rendimentos e documentos, revise sua declaração e envie.</p>
+      <p style="text-align:center;margin-top:15px;">
+        <a href="https://www.linkconnector.com/ta.php?lc=007949061588005142&atid=e-FileWebWeb" class="cta-button">
+          DECLARAR IMPOSTO EM PORTUGUÊS COM E‑FILE.COM
+        </a>
+      </p>
+    </div>
+
+    <div class="multi-guide">
+      <h3>🇷🇺 Русский: Как подать налоги США через E‑file.com</h3>
+      <p>
+        1. Нажмите на ссылку <a href="https://www.linkconnector.com/ta.php?lc=007949061588005142&atid=e-FileWebWeb">“Подать налоги США здесь”</a>, чтобы открыть E‑file.com.</p>
+      <p>
+        2. Войдите в систему или создайте аккаунт и выберите “Федеральная налоговая декларация США 2026 – Нерезидент / Визовый держатель”.</p>
+      <p>
+        3. Следуйте пошаговому мастеру, введите своих доходы и документы, проверьте декларацию и отправьте её.</p>
+      <p style="text-align:center;margin-top:15px;">
+        <a href="https://www.linkconnector.com/ta.php?lc=007949061588005142&atid=e-FileWebWeb" class="cta-button">
+          ПОДАТЬ НАЛОГИ В США С E‑FILE.COM (РУССКИЙ)
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="lang-bar">
+      <span style="color:#666;">Language / Idioma / Langue / Sprache / Idioma / Язык:</span>
+      <a href="https://yourdomain.com/">🇬🇧 English</a>
+      <a href="https://yourdomain.com/es/">🇪🇸 Español</a>
+      <a href="https://yourdomain.com/fr/">🇫🇷 Français</a>
+      <a href="https://yourdomain.com/de/">🇩🇪 Deutschland</a>
+      <a href="https://yourdomain.com/pt/">🇧🇷 Português</a>
+      <a href="https://yourdomain.com/ru/">🇷🇺 Русский</a>
+    </div>
+    <p>
+      <a href="https://www.e-file.com/contact-us.php">🛠️ E‑file.com Support</a> |
+      <a href="/privacy/">🔒 Privacy Policy</a> |
+      <a href="/terms/">📋 Terms of Service</a><br>
+      <strong>© <span id="year"></span> Benny "Palmo Kid" Palmarino</strong> |
+      Langhorne, PA &amp; US‑focused tax authority site for non‑residents & visa holders |
+      <a href="/authors/benny/">Expert Bio</a>
+    </p>
+    <p style="margin-top:10px;font-size:.9em;color:#666;">
+      This site is not the IRS or your host‑country tax authority. Information is for educational purposes.
+    </p>
+    <p style="margin-top:15px;font-size:.9em;color:#1976D2;">
+      <strong>US Tax Checklist (English):</strong> Use the checklist above and then click 
+      <a href="https://www.linkconnector.com/ta.php?lc=007949061588005142&atid=e-FileWebWeb">here to file US taxes with E‑file.com</a>.
+    </p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function trackClick(id) {
+      console.log("🎯 Affiliate CTA clicked:", id);
+      if (typeof gtag !== "undefined") {
+        gtag("event", "conversion", {
+          event_category: "TaxFiling",
+          event_label: id,
+          value: 25.49,
+        });
+      }
+    }
+    document.querySelectorAll(".cta-button").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const href = btn.getAttribute("href");
+        if (href) {
+          const isEfile = href.includes("e-File");
+          const isExtension = href.includes("TaxExtensio");
+          trackClick(isEfile ? "free_file" : isExtension ? "extension" : "generic_cta");
+        }
+      });
+    });
+
+    if (Math.random() > 0.5) {
+      const mainH1 = document.querySelector("header h1 a");
+      if (mainH1) {
+        mainH1.textContent = "Save $50+ vs TurboTax – Free IRS E‑file 2026";
+      }
+      const firstCta = document.querySelector(".cta-button");
+      if (firstCta) {
+        firstCta.textContent = "💰 Save $50+ vs TurboTax ➤";
+      }
+    }
+  </script>
+
+  <!-- SCHEMA FOR NON‑RESIDENTS FILING US TAXES -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Benny “Palmo Kid” Palmarino",
+    "jobTitle": "Certified Tax Filing Expert & Affiliate",
+    "description": "Langhorne PA tax specialist helping 5,000+ non‑residents, visa holders, and green card holders save on 2026 US federal taxes.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Langhorne",
+      "addressRegion": "PA",
+      "addressCountry": "US"
+    },
+    "url": "https://yourdomain.com/authors/benny/",
+    "sameAs": [
+      "https://twitter.com/palmokid",
+      "https://linkedin.com/in/bennypalmarino"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["SoftwareApplication", "LocalBusiness"],
+    "name": "E‑file.com 2026 Tax Software – Pennsylvania",
+    "description": "IRS Free File Alliance partner. Used by non‑residents, visa holders, and green card holders to file US federal taxes.",
+    "url": "https://yourdomain.com/us/",
+    "telephone": "+1-800-EFILE-PA",
+    "applicationCategory": "BusinessApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "areaServed": {
+      "@type": "Place",
+      "name": "Pennsylvania"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "1200"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "File US Taxes 2026 | Non‑Residents & Visa Holders File IRS Taxes Online",
+    "description": "Guide to filing 2026 US taxes for non‑residents, visa holders, and green card holders who must file US federal returns.",
+    "author": {
+      "@type": "Person",
+      "name": "Benny “Palmo Kid” Palmarino"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "USFileHere.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://yourdomain.com/logo.png"
+      }
+    },
+    "datePublished": "2026-03-25T16:25:00-04:00",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://yourdomain.com/"
+    }
+  }
+  </script>
+</body>
+</html>
