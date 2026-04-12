@@ -1,12 +1,19 @@
-"remaining": [
-    "Form 1040-NR schedule OI", "W-8BEN-E treaty benefits", "qualified overtime deduction limit", 
-    "Section 70202 OBBB filing", "IRS Direct File pilot states", "Schedule A-1 2026 update", 
-    "car loan interest 1098-VLI", "tax on tips exemption cap", "non-resident alien standard deduction", 
-    "Substantial Presence Test formula", "weighted 3-year lookback IRS", "F-1 student tax treaty India", 
-    "J-1 scholar treaty UK Article 20", "Social Security refund Form 843", "Medicare tax exempt status", 
-    "ITIN application Form W-7", "Dual-status alien filing year", "FEIE physical presence test", 
-    "Child Tax Credit OBBB 2026", "Senior enhancement credit 65 plus", "estimated tax 1040-ES", 
-    "Schedule C non-resident business", "Qualified business income QBI", "IRS late filing relief 2026", 
-    "Form 4868 automatic extension", "June 15 expat filing deadline", "foreign bank account FBAR", 
-    "FATCA Form 8938 requirements", "state tax for non-residents", "CA nonresident tax Form 540NR"
-]
+{
+  "remaining": [
+    "OBBB Section 70202 deductions 2026", "Form 1098-VLI vehicle interest calculation", "IRS Direct File pilot registration",
+    "1040-NR schedule A-1 overtime rules", "qualified tip income exclusion limits", "Substantial Presence Test weighted average",
+    "F1 visa tax treaty Article 21 benefits", "J1 scholar residency status 2026", "Form 8843 compliance checklist",
+    "Social Security tax refund for non-residents", "ITIN renewal process April 2026", "dual-status alien filing logic",
+    "foreign earned income exclusion cap 132900", "standard deduction single filers 16100", "Head of Household OBBB rules",
+    "Tax treaty benefits UK Article 20", "Tax treaty benefits India Article 21", "child tax credit expansion 2200",
+    "energy efficient home credit non-resident", "Schedule C non-resident freelancer", "estimated tax payments 1099-NEC 2000",
+    "IRS late filing penalty 2026 relief", "automatic extension Form 4868 instructions", "June 15 deadline expat portal",
+    "W-8BEN-E treaty claim instructions", "IRS AI audit detection avoidance", "TCJA permanent extension impact",
+    "Senior deduction 6000 OBBB", "qualified overtime pay 25000 limit", "SALT deduction cap 40000",
+    "1% federal remittance tax fee", "Foreign Tax Credit vs FEIE 2026", "IRS E-File shutdown maintenance dates",
+    "1099-K reporting threshold 20000", "Qualified cash tips occupation list", "FLSA covered overtime tax relief",
+    "IRS Form 2555 physical presence test", "Expat refund velocity optimization", "Audit-secure filing for digital nomads",
+    "Non-resident tax refund status tracker"
+  ],
+  "used": []
+}
