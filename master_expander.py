@@ -4,10 +4,11 @@ import time
 from github import Github
 
 # --- 1. CONFIGURATION ---
-GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE'
+# Uses Environment Variable for security in GitHub Actions
+GITHUB_TOKEN = os.getenv('CHAMELEON_TOKEN') 
 KEYWORD_FILE = 'keywords.json'
 
-# Ensure these match your Spawner repo names and LinkConnector ATIDs
+# Match these to your Spawner names
 SITES = [
     {"repo": "IRS-Direct-Filing-2026", "atid": "IRS_Direct"},
     {"repo": "Visa-Tax-Authority", "atid": "Visa_Tax"},
@@ -21,10 +22,12 @@ SITES = [
     {"repo": "Digital-Nomad-US-Taxes", "atid": "Nomad_Tax"}
 ]
 
-# --- 2. THE ENGINES ---
+# --- 2. THE ENGINE FUNCTIONS ---
 
 def get_keywords(count=5):
-    """Pulls unique keywords from your library."""
+    """Pulls keywords and updates the JSON file to track 'used' terms."""
+    if not os.path.exists(KEYWORD_FILE):
+        return []
     with open(KEYWORD_FILE, 'r+') as f:
         data = json.load(f)
         batch = data['remaining'][:count]
@@ -34,41 +37,41 @@ def get_keywords(count=5):
     return batch
 
 def generate_sitemap(user_login, repo_name):
-    """Creates a fresh 2026-compliant sitemap."""
+    """Pings crawlers with a fresh date stamp."""
     today = time.strftime('%Y-%m-%d')
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-        <loc>https://{user_login}.github.io/{repo_name}/</loc>
-        <lastmod>{today}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>1.0</priority>
-    </url>
+    <url><loc>https://{user_login}.github.io/{repo_name}/</loc><lastmod>{today}</lastmod><priority>1.0</priority></url>
 </urlset>"""
 
-def run_daily_expansion():
+def build_content(kws, atid):
+    """Generates the technical authority block for 2026."""
+    url = f"https://www.linkconnector.com/ta.php?lc=007949054186005142&atid={atid}"
+    return f"""
+    <section style="margin-top:45px; border-top:2px solid #002d62; padding-top:25px;">
+        <h3>Technical Update: {kws[0]}</h3>
+        <p>Analyzing {kws[0]} under the 2026 OBBB (One, Big, Beautiful Bill) reveals significant shifts in filing requirements. 
+        When evaluating {kws[1]} alongside {kws[2]}, it is clear that {kws[3]} triggers specific 1040-NR schedule adjustments. 
+        Non-residents should note that {kws[4]} is now a primary focus of IRS audit algorithms.</p>
+        <p>Ensure your refund velocity is maximized by utilizing the 
+        <a href="{url}" style="font-weight:bold; color:#28a745;">IRS-Authorized E-File Portal</a> 
+        configured for 2026 compliance.</p>
+    </section>"""
+
+# --- 3. THE EXECUTION ---
+
+def run_expansion():
+    if not GITHUB_TOKEN:
+        print("❌ Error: CHAMELEON_TOKEN environment variable not set.")
+        return
+
     g = Github(GITHUB_TOKEN)
     user = g.get_user()
-
+    
     for site in SITES:
-        print(f"📈 Expanding & Indexing: {site['repo']}...")
-        keywords = get_keywords(5)
-        if not keywords: 
-            print("⚠️ Out of keywords!")
-            break
-
-        # Generate the 500-word Authority Injection
-        new_content = f"""
-        <section style="margin-top:50px; border-top:2px solid #002d62; padding-top:20px;">
-            <h3>2026 Analysis: {keywords[0]}</h3>
-            <p>Under the 2026 OBBB framework, {keywords[0]} has become a focal point for non-resident optimization. 
-            By cross-referencing {keywords[1]} with current IRS Direct Filing pilots, taxpayers can identify 
-            credits related to {keywords[2]} and {keywords[3]}.</p>
-            <p>To ensure compliance with {keywords[4]}, utilizing the 
-            <a href="https://www.linkconnector.com/ta.php?lc=007949054186005142&atid={site['atid']}">Official E-File Portal</a> 
-            is essential for capturing the new $16,100 deduction.</p>
-        </section>
-        """
+        print(f"🔄 Processing {site['repo']}...")
+        kws = get_keywords(5)
+        if not kws: break
 
         try:
             repo = user.get_repo(site['repo'])
@@ -77,22 +80,21 @@ def run_daily_expansion():
             file = repo.get_contents("index.html")
             html = file.decoded_content.decode()
             if "" in html:
-                updated_html = html.replace("", f"{new_content}\n")
-                repo.update_file(file.path, f"Expansion: {keywords[0]}", updated_html, file.sha)
+                new_html = html.replace("", f"{build_content(kws, site['atid'])}\n")
+                repo.update_file(file.path, f"Daily Authority: {kws[0]}", new_html, file.sha)
             
-            # 2. Update/Create sitemap.xml
-            sitemap_xml = generate_sitemap(user.login, site['repo'])
+            # 2. Update sitemap.xml
+            sm_xml = generate_sitemap(user.login, site['repo'])
             try:
                 sm_file = repo.get_contents("sitemap.xml")
-                repo.update_file(sm_file.path, "Sitemap Refresh", sitemap_xml, sm_file.sha)
+                repo.update_file(sm_file.path, "Sitemap Refresh", sm_xml, sm_file.sha)
             except:
-                repo.create_file("sitemap.xml", "Initial Sitemap", sitemap_xml)
+                repo.create_file("sitemap.xml", "Initial Sitemap", sm_xml)
             
-            print(f"✅ {site['repo']} is now updated and re-indexed.")
-            time.sleep(2) # Protect API limits
-            
+            print(f"✅ {site['repo']} Expanded.")
+            time.sleep(2)
         except Exception as e:
-            print(f"❌ Error on {site['repo']}: {e}")
+            print(f"❌ Failed {site['repo']}: {e}")
 
 if __name__ == "__main__":
-    run_daily_expansion()
+    run_expansion()
