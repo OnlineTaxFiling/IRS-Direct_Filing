@@ -1,6 +1,12 @@
 name: Chameleon Expansion
 on:
+  schedule:
+    - cron: '0 13 * * *' # Runs at 9:00 AM EST
   workflow_dispatch: 
+
+# This clears the Node.js 20 warning
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -27,5 +33,4 @@ jobs:
       - name: Auto-Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Automated Tax Update: $(date)"
-          # This action handles the 'Push' and permissions for you
+          commit_message: "Tax Hub Update: $(date)"
