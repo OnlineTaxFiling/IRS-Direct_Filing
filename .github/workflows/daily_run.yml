@@ -10,8 +10,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.CHAMELEON_TOKEN }} # Uses your key right from the start
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -26,12 +24,8 @@ jobs:
           CHAMELEON_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
         run: python master_expander.py
 
-      - name: Sync Keyword Progress
-        run: |
-          git config --global user.name 'Chameleon-Bot'
-          git config --global user.email 'bot@chameleon.marketer'
-          git add keywords.json
-          # This line forces Git to use your token for the push
-          git remote set-url origin https://x-access-token:${{ secrets.CHAMELEON_TOKEN }}@github.com/${{ github.repository }}.git
-          git commit -m "Sync: $(date)" || echo "No changes to commit"
-          git push
+      - name: Auto-Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated Tax Update: $(date)"
+          # This action handles the 'Push' and permissions for you
