@@ -1,0 +1,28 @@
+name: Chameleon Expansion
+on:
+  schedule:
+    - cron: '0 13 * * *' # Runs at 9:00 AM EST daily
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PyGithub
+        run: pip install PyGithub
+      - name: Run Expansion
+        env:
+          CHAMELEON_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
+        run: python master_expander.py
+      - name: Sync Keyword Progress
+        run: |
+          git config --global user.name 'Chameleon-Bot'
+          git config --global user.email 'bot@chameleon.marketer'
+          git add keywords.json
+          git commit -m "Sync: Keywords used on $(date)"
+          git push
