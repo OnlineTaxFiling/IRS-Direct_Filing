@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Block bots from seeing your automation logic
+Disallow: /.github/
+Disallow: /scripts/
+
+# Point directly to your sitemap (Update this for each repo)
+Sitemap: https://brightlane.github.io/OnlineTaxFiling/sitemap.xml
