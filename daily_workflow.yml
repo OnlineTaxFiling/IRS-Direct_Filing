@@ -1,25 +1,33 @@
-name: Daily Chameleon Expansion
+name: Chameleon Expansion
 on:
-  schedule:
-    - cron: '0 12 * * *' # Runs at 12:00 UTC (8:00 AM EST) every single day
-  workflow_dispatch: # Allows you to also click a button to run it manually
+  workflow_dispatch: # This is the manual 'Run' button
 
 jobs:
-  expand-network:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
+      - name: Install PyGithub
         run: pip install PyGithub
 
-      - name: Execute Expansion
+      - name: Run Expansion
         env:
-          GITHUB_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
+          # Check this name against your Secrets page!
+          CHAMELEON_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
         run: python master_expander.py
+
+      - name: Sync Keywords
+        run: |
+          git config --global user.name 'Chameleon-Bot'
+          git config --global user.email 'bot@chameleon.marketer'
+          git add keywords.json
+          git commit -m "Update Keywords" || echo "No changes"
+          git push
