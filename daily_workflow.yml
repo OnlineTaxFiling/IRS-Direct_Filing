@@ -1,0 +1,25 @@
+name: Daily Chameleon Expansion
+on:
+  schedule:
+    - cron: '0 12 * * *' # Runs at 12:00 UTC (8:00 AM EST) every single day
+  workflow_dispatch: # Allows you to also click a button to run it manually
+
+jobs:
+  expand-network:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: pip install PyGithub
+
+      - name: Execute Expansion
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
+        run: python master_expander.py
