@@ -2,27 +2,42 @@ name: Chameleon Expansion
 on:
   schedule:
     - cron: '0 13 * * *' # 9:00 AM EST Daily
-  workflow_dispatch: # Allows you to click 'Run' manually to test
+  workflow_dispatch: 
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # --- THIS IS THE OVERRIDE SECTION ---
+    permissions:
+      contents: write
+      pull-requests: write
+    # ------------------------------------
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false # We will use the secret instead
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install PyGithub
         run: pip install PyGithub
+
       - name: Run Expansion
         env:
           CHAMELEON_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
         run: python master_expander.py
+
       - name: Sync Keyword Progress
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
         run: |
           git config --global user.name 'Chameleon-Bot'
           git config --global user.email 'bot@chameleon.marketer'
           git add keywords.json
-          git commit -m "Automated Content Injection: $(date)"
+          # Force the use of the token for the push to bypass the 128 error
+          git remote set-url origin https://x-access-token:${{ secrets.CHAMELEON_TOKEN }}@github.com/${{ github.repository }}.git
+          git commit -m "Automated Content Injection: $(date)" || echo "No changes to commit"
           git push
