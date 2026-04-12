@@ -3,11 +3,12 @@ import json
 import time
 from github import Github
 
-# --- SETTINGS ---
-GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE'
+# --- 1. CONFIGURATION ---
+# Replace with your Classic PAT (must have 'repo' scope)
+GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE' 
 KEYWORD_FILE = 'keywords.json'
 
-# This matches the 'atid' and 'repo' names from your Spawner
+# This list must match the 'repo' and 'atid' values from your Spawner
 SITES = [
     {"repo": "IRS-Direct-Filing-2026", "atid": "IRS_Direct"},
     {"repo": "Visa-Tax-Authority", "atid": "Visa_Tax"},
@@ -21,50 +22,97 @@ SITES = [
     {"repo": "Digital-Nomad-US-Taxes", "atid": "Nomad_Tax"}
 ]
 
-def get_keywords(count=5):
+# --- 2. THE UTILITY FUNCTIONS ---
+
+def get_daily_keywords(count=5):
+    """Pulls unique keywords and moves them to the 'used' list."""
+    if not os.path.exists(KEYWORD_FILE):
+        return []
     with open(KEYWORD_FILE, 'r+') as f:
         data = json.load(f)
-        batch = data['remaining'][:count]
+        selected = data['remaining'][:count]
         data['remaining'] = data['remaining'][count:]
-        data['used'].extend(batch)
+        data['used'].extend(selected)
         f.seek(0); json.dump(data, f, indent=2); f.truncate()
-    return batch
+    return selected
 
-def expand_all():
+def build_injection_block(keywords, atid):
+    """Creates a 2026-compliant content block with affiliate tracking."""
+    affiliate_url = f"https://www.linkconnector.com/ta.php?lc=007949054186005142&atid={atid}"
+    return f"""
+    <section style="margin-top: 45px; border-top: 1px solid #ddd; padding-top: 25px;">
+        <h3>2026 Regulatory Review: {keywords[0]}</h3>
+        <p>In the current fiscal landscape, {keywords[0]} is a critical component for those filing under the OBBB guidelines. 
+        Recent updates suggest that {keywords[1]} and {keywords[2]} must be filed using the enhanced 1040-NR schedules to ensure 
+        maximum refund velocity. Experts note that {keywords[3]} is often overlooked, leading to processing delays.</p>
+        
+        <div style="background: #eef9f1; padding: 20px; border-radius: 6px; border-left: 5px solid #28a745;">
+            <strong>Pro Tip:</strong> Most {keywords[4]} errors can be avoided by using the 
+            <a href="{affiliate_url}" style="color: #002d62; font-weight: bold;">Official 2026 E-File Interface</a>, 
+            which automatically updates for all 'One, Big, Beautiful Bill' provisions.
+        </div>
+    </section>
+    """
+
+def update_sitemap(repo, user_login, repo_name):
+    """Updates the sitemap.xml to trigger a re-index ping."""
+    sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://{user_login}.github.io/{repo_name}/</loc>
+        <lastmod>{time.strftime('%Y-%m-%d')}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+</urlset>"""
+    try:
+        f = repo.get_contents("sitemap.xml")
+        repo.update_file(f.path, "Daily Sitemap Refresh", sitemap_xml, f.sha)
+    except:
+        repo.create_file("sitemap.xml", "Initial Sitemap", sitemap_xml)
+
+# --- 3. THE MAIN LOOP ---
+
+def run_expansion():
     g = Github(GITHUB_TOKEN)
     user = g.get_user()
-
+    
     for site in SITES:
-        print(f"📈 Expanding {site['repo']}...")
-        keywords = get_keywords(5)
-        if not keywords: break
-
-        # Generate the 500-word Authority Injection
-        new_content = f"""
-        <section style="margin-top:50px; border-top:2px solid #002d62; padding-top:20px;">
-            <h3>2026 Deep Dive: {keywords[0]} & {keywords[1]}</h3>
-            <p>Under the 2026 OBBB framework, {keywords[0]} has become a focal point for non-resident optimization. 
-            By cross-referencing {keywords[1]} with current IRS Direct Filing pilots, taxpayers can often 
-            identify additional credits related to {keywords[2]}.</p>
-            <p>To ensure 100% compliance with these specific 2026 codes, utilizing an 
-            <a href="https://www.linkconnector.com/ta.php?lc=007949054186005142&atid={site['atid']}">IRS-Authorized portal</a> 
-            is recommended to avoid the 'Manual Review' queue.</p>
-        </section>
-        """
+        print(f"🔄 Processing {site['repo']}...")
+        keywords = get_daily_keywords(5)
+        
+        if not keywords:
+            print(f"⚠️ Out of keywords for {site['repo']}")
+            continue
 
         try:
             repo = user.get_repo(site['repo'])
-            file = repo.get_contents("index.html")
-            html = file.decoded_content.decode()
-
-            if "" in html:
-                updated = html.replace("", f"{new_content}\n")
-                repo.update_file(file.path, f"Daily Authority Expansion: {keywords[0]}", updated, file.sha)
-                print(f"✅ {site['repo']} Updated.")
+            # 1. Update index.html
+            file_content = repo.get_contents("index.html")
+            html = file_content.decoded_content.decode()
             
-            time.sleep(2) # Avoid API rate limits
+            marker = ''
+            if marker in html:
+                new_block = build_injection_block(keywords, site['atid'])
+                updated_html = html.replace(marker, f"{new_block}\n{marker}")
+                
+                repo.update_file(
+                    file_content.path, 
+                    f"Authority Injection: {keywords[0]}", 
+                    updated_html, 
+                    file_content.sha
+                )
+                
+                # 2. Refresh Sitemap
+                update_sitemap(repo, user.login, site['repo'])
+                print(f"✅ {site['repo']} successfully updated.")
+            else:
+                print(f"❌ Marker missing in {site['repo']}")
+
         except Exception as e:
-            print(f"❌ Error on {site['repo']}: {e}")
+            print(f"❌ Error in {site['repo']}: {e}")
+        
+        time.sleep(2) # Prevent API abuse triggers
 
 if __name__ == "__main__":
-    expand_all()
+    run_expansion()
