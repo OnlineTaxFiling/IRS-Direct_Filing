@@ -2,7 +2,7 @@ name: Chameleon Expansion
 on:
   schedule:
     - cron: '0 13 * * *' # 9:00 AM EST Daily
-  workflow_dispatch: # Allows manual test runs
+  workflow_dispatch: # Allows you to click 'Run' manually to test
 
 jobs:
   build:
@@ -13,11 +13,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Dependencies
+      - name: Install PyGithub
         run: pip install PyGithub
       - name: Run Expansion
         env:
-          # This line connects the Secret you just made to the Python script
           CHAMELEON_TOKEN: ${{ secrets.CHAMELEON_TOKEN }}
         run: python master_expander.py
       - name: Sync Keyword Progress
